@@ -65,14 +65,16 @@
         <button id="reset">Reset</button>
     </div>
     <div id="solar-system-container">
-        <svg id="solar-system" viewBox="-100 -100 1200 1200" preserveAspectRatio="xMidYMid meet"></svg>
+        <svg id="solar-system" viewBox="-150 -150 1300 1300" preserveAspectRatio="xMidYMid meet"></svg>
     </div>
+    <div id="info-box" class="info-box"></div>
     <script>
         const solarSystem = document.getElementById("solar-system");
         const speedInput = document.getElementById("speed");
         const applyTimeBtn = document.getElementById("apply-time");
         const resetBtn = document.getElementById("reset");
         const timeInput = document.getElementById("set-time");
+        const infoBox = document.getElementById("info-box");
         let timeMultiplier = 1;
         let timeElapsed = Date.now() / 86400000;
 
@@ -109,6 +111,16 @@
             planet.element.setAttribute("r", 10);
             planet.element.setAttribute("fill", planet.color);
             solarSystem.appendChild(planet.element);
+            
+            planet.element.addEventListener("mouseenter", (event) => {
+                infoBox.style.left = `${event.clientX + 10}px`;
+                infoBox.style.top = `${event.clientY + 10}px`;
+                infoBox.innerHTML = `<strong>${planet.name}</strong>`;
+                infoBox.style.display = "block";
+            });
+            planet.element.addEventListener("mouseleave", () => {
+                infoBox.style.display = "none";
+            });
         });
 
         function updatePositions() {
