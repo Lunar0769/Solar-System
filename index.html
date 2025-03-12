@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar System Visualization</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+        #solar-system-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #solar-system {
+            width: 90vw;
+            height: 90vh;
+        }
+        .orbit {
+            fill: none;
+            stroke: rgba(173, 216, 230, 0.7);
+            stroke-width: 2;
+            stroke-dasharray: 5, 5;
+        }
+        .info-box {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.8);
+            color: black;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            display: none;
+            pointer-events: none;
+        }
+        .controls {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 10;
+        }
+        .controls input, .controls button {
+            margin: 5px 0;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <label for="speed">Time Multiplier:</label>
+        <input type="range" id="speed" min="0.1" max="10" step="0.1" value="1">
+        <label for="set-time">Set Date & Time:</label>
+        <input type="datetime-local" id="set-time">
+        <button id="apply-time">Apply</button>
+        <button id="reset">Reset</button>
+    </div>
+    <div id="solar-system-container">
+        <svg id="solar-system" viewBox="-100 -100 1200 1200" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+    <script>
+        const solarSystem = document.getElementById("solar-system");
+        const speedInput = document.getElementById("speed");
+        const applyTimeBtn = document.getElementById("apply-time");
+        const resetBtn = document.getElementById("reset");
+        const timeInput = document.getElementById("set-time");
+        let timeMultiplier = 1;
+        let timeElapsed = Date.now() / 86400000;
+
+        const centerX = 500;
+        const centerY = 500;
+
+        const sun = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+        sun.setAttribute("cx", centerX);
+        sun.setAttribute("cy", centerY);
+        sun.setAttribute("r", 40);
+        sun.setAttribute("fill", "yellow");
+        solarSystem.appendChild(sun);
+
+        const planets = [
+            { name: "Mercury", distance: 80, period: 88, color: "gray" },
+            { name: "Venus", distance: 120, period: 225, color: "orange" },
+            { name: "Earth", distance: 160, period: 365, color: "blue" },
+            { name: "Mars", distance: 200, period: 687, color: "red" },
+            { name: "Jupiter", distance: 300, period: 4333, color: "brown" },
+            { name: "Saturn", distance: 400, period: 10759, color: "gold" },
+            { name: "Uranus", distance: 500, period: 30687, color: "cyan" },
+            { name: "Neptune", distance: 600, period: 60190, color: "blue" }
+        ];
+
+        planets.forEach(planet => {
+            const orbit = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            orbit.setAttribute("cx", centerX);
+            orbit.setAttribute("cy", centerY);
+            orbit.setAttribute("r", planet.distance);
+            orbit.setAttribute("class", "orbit");
+            solarSystem.appendChild(orbit);
+
+            planet.element = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+            planet.element.setAttribute("r", 10);
+            planet.element.setAttribute("fill", planet.color);
+            solarSystem.appendChild(planet.element);
+        });
+
+        function updatePositions() {
+            planets.forEach((planet) => {
+                const angle = (timeElapsed / planet.period) * 2 * Math.PI;
+                const x = centerX + planet.distance * Math.cos(angle);
+                const y = centerY + planet.distance * Math.sin(angle);
+                planet.element.setAttribute("cx", x);
+                planet.element.setAttribute("cy", y);
+            });
+        }
+
+        speedInput.addEventListener("input", () => {
+            timeMultiplier = parseFloat(speedInput.value);
+        });
+
+        applyTimeBtn.addEventListener("click", () => {
+            const selectedTime = new Date(timeInput.value).getTime() / 86400000;
+            if (!isNaN(selectedTime)) {
+                timeElapsed = selectedTime;
+                updatePositions();
+            }
+        });
+
+        resetBtn.addEventListener("click", () => {
+            timeElapsed = Date.now() / 86400000;
+            updatePositions();
+        });
+
+        function animate() {
+            timeElapsed += timeMultiplier;
+            updatePositions();
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
