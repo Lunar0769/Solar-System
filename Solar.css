@@ -1,0 +1,48 @@
+body {
+    margin: 0;
+    overflow: hidden;
+    background-color: black;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+#solar-system-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#solar-system {
+    width: 90vw;
+    height: 90vh;
+}
+.orbit {
+    fill: none;
+    stroke: rgba(173, 216, 230, 0.7);
+    stroke-width: 2;
+    stroke-dasharray: 5, 5;
+}
+.info-box {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.8);
+    color: black;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    display: none;
+    pointer-events: none;
+}
+.controls {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px;
+    border-radius: 5px;
+    z-index: 10;
+}
+.controls input, .controls button {
+    margin: 5px 0;
+    padding: 5px;
+}
